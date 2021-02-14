@@ -5,15 +5,21 @@ import android.app.Notification;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Message;
 import android.os.Parcelable;
 import android.preference.PreferenceManager;
+import android.service.notification.NotificationListenerService;
 import android.util.Log;
 import android.view.View;
 import android.view.accessibility.AccessibilityEvent;
 import android.widget.TextView;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class MyAccessibilityService extends AccessibilityService {
 
+//    private static final CharSequence[] NULL = {};
     public SharedPreferences pref;
     public static final String SHARED_PREFERENCES = "SharedPreferences";
     public static final String KEY = "Messages";
@@ -35,12 +41,46 @@ public class MyAccessibilityService extends AccessibilityService {
 
             Parcelable parcelable = event.getParcelableData();
             Notification notif = (Notification) parcelable;
-            Bundle extras = notif.extras;
             pref = getSharedPreferences(SHARED_PREFERENCES, 0);
             SharedPreferences.Editor editor = pref.edit();
-            String senderName = extras.getString("android.title");
-            String message = extras.getString("android.text");
+            Notification notification = (Notification) event.getParcelableData();
+            CharSequence[] lines;
+            lines = notification.extras.getCharSequenceArray(Notification.EXTRA_TEXT_LINES);
+
+
+            int i = 0;
+            String message = " ";
+            String senderName = " ";
+//
+//            String previousData = " ";
+////            if(lines == NULL) {
+//                for(CharSequence msg : lines) {
+////                senderName = " ";
+//                    Log.d("Line " + i, (String) msg);
+//                    message += (String) " " + msg;
+//                    i += 1;
+//                }
+//
+//            }
+//            else {
+//                senderName = extras.getString("android.title");
+//                message = extras.getString("android.text");
+//                previousData = pref.getString(KEY, "nothing is here");
+//            }
+
+
+
+//            senderName = extras.getString("android.title");
+//            message = extras.getString("android.text");
             String previousData = pref.getString(KEY, "nothing is here");
+            if(lines != null) { // To remove null pointer error giving any sequence of text
+                for (CharSequence msg : lines) {
+                    //                senderName = " ";
+                    Log.d("Line " + i, (String) msg);
+                    message += (String) "\n" + msg;
+                    i += 1;
+                }
+            }
 
             int flag = 0;
 //            if(flag != 0) {
